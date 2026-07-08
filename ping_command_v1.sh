@@ -17,6 +17,8 @@ DST=$2
 case $DST in
     node1) DST_IP="172.0.0.2" ;;
     node2) DST_IP="172.0.0.3" ;;
+    node3) DST_IP="10.10.0.2" ;;
+    node4) DST_IP="10.10.0.3" ;;
     *) 
         echo "Unknown destination node: $DST"
         exit 1 

@@ -7,7 +7,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 echo "Creating Namespaces ..."
-for ns in node1 node2; do
+for ns in node1 node2 node3 node4; do
     ip netns add $ns
     ip netns exec $ns ip link set lo up
 done
@@ -15,6 +15,10 @@ done
 echo "Creating Bridges..."
 ip link add br1 type bridge
 ip link set br1 up
+
+ip link add br2 type bridge
+ip link set br2 up
+
 
 echo "Connecting Nodes to The Bridge..."
 
@@ -37,5 +41,6 @@ echo "Connecting nodes to bridges..."
 connect_node node1 br1 172.0.0.2/24
 connect_node node2 br1 172.0.0.3/24
 
-
+connect_node node3 br2 10.10.0.2/24
+connect_node node4 br2 10.10.0.3/24
 echo "Topology setup complete!"
