@@ -13,31 +13,29 @@ for ns in node1 node2; do
 done
 
 echo "Creating Bridges..."
-ip link add name br type bridge
-ip link set dev br up
+ip link add br1 type bridge
+ip link set br1 up
 
 echo "Connecting Nodes to The Bridge..."
 
-# node1
-# Create veth pair one end for the node, one for the bridge
-ip link add veth-node1 type veth peer name veth-br1
-ip link set veth-br1 master br
-ip link set veth-br1 up
+connect_node() {
+    NODE=$1
+    BRIDGE=$2
+    IP=$3
+    VETH_NODE="veth-${NODE}"
+    VETH_BR="veth-${NODE}-br"
 
-# Move node end to namespace and configure
-ip link set veth-node1 netns node1
-ip netns exec node1 ip addr add 172.0.0.2/24 dev veth-node1
-ip netns exec node1 ip link set veth-node1 up
+    ip link add $VETH_NODE type veth peer name $VETH_BR
+    ip link set $VETH_BR master $BRIDGE
+    ip link set $VETH_BR up
 
-# node2
-# doing the same above for node2
-ip link add veth-node2 type veth peer name veth-br2
-ip link set veth-br2 master br
-ip link set veth-br2 up
+    ip link set $VETH_NODE netns $NODE
+    ip netns exec $NODE ip addr add $IP dev $VETH_NODE
+    ip netns exec $NODE ip link set $VETH_NODE up
+}
+echo "Connecting nodes to bridges..."
+connect_node node1 br1 172.0.0.2/24
+connect_node node2 br1 172.0.0.3/24
 
-#...
-ip link set veth-node2 netns node2
-ip netns exec node2 ip addr add 172.0.0.3/24 dev veth-node2
-ip netns exec node2 ip link set veth-node2 up
 
 echo "Topology setup complete!"
