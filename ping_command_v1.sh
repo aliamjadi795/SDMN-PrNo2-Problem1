@@ -19,6 +19,9 @@ case $DST in
     node2) DST_IP="172.0.0.3" ;;
     node3) DST_IP="10.10.0.2" ;;
     node4) DST_IP="10.10.0.3" ;;
+    
+    #I guess the first port's ID would be enough...
+    router) DST_IP="172.0.0.1" ;;
     *) 
         echo "Unknown destination node: $DST"
         exit 1 
@@ -27,4 +30,3 @@ esac
 
 echo "Pinging $DST ($DST_IP) from $SRC..."
 ip netns exec $SRC ping $DST_IP
-
